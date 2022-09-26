@@ -121,7 +121,7 @@ app.use((req,res,next)=>{
 
 //2 ROUTES
 //Views
-const viewRouter=require('./routes/viewRotes')
+const viewRouter=require('./routes/viewRoutes')
 app.use('/',viewRouter)
 
 //Tour
