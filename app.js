@@ -103,7 +103,7 @@ app.use(hpp({
 
 
 //Tìm hiểu công dụng
-app.use(compression());
+// app.use(compression());
 app.use(cors());
 
 //Serving static files

@@ -52,9 +52,7 @@ if(userDataForm){
         // }
         //updateSetting(form,'data');
 
-        // const name = document.getElementById('name').value;
-        // const email = document.getElementById('email').value;
-        updateSetting({name,email},'data');
+        updateSetting(form,'data');
     });
 }
 
