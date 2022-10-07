@@ -64,7 +64,7 @@ reviewSchema.statics.calcAverageRatings =async function(tourId){//reviewSchema.s
             }
         }
     ]);
-    console.log(stats);
+    // console.log(stats);
     /*
     console.log(stats);
     [

@@ -47,9 +47,9 @@ if(userDataForm){
         form.append('email',document.getElementById('email').value);
         form.append('photo',document.getElementById('photo').files[0]);
 
-        for(var p of form){
-            console.log(p);
-        }
+        // for(var p of form){
+        //     console.log(p);
+        // }
         //updateSetting(form,'data');
 
         // const name = document.getElementById('name').value;

@@ -9,6 +9,8 @@ const hpp = require('hpp');
 const path = require('path');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
+
 
 const AppError=require('./utils/appError');
 const globalErrorHandle=require('./controller/errorController');
@@ -100,6 +102,8 @@ app.use(hpp({
 }));
 
 
+//Tìm hiểu công dụng
+app.use(compression());
 app.use(cors());
 
 //Serving static files
@@ -116,7 +120,6 @@ app.use(express.static(path.join(__dirname,'public'))) // middleware hiển th�
 //Test midleware
 app.use((req,res,next)=>{
     req.requesTime=new Date().toISOString(); // thêm thành phần vào trong object req được request lên từ client, thêm thuộc tính requestime vào object req, toISOString có dạng: 2017-06-15T07:41:18.475Z
-    console.log(req.cookies)
     next();
 })
 
