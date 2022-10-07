@@ -4,7 +4,7 @@ const User=require('../models/userModel');
 const catchAsync=require('../utils/catchAsync');
 const jwt = require('jsonwebtoken');
 const AppError=require('../utils/appError');
-const sendEmail=require('../utils/email');
+const Email=require('../utils/email');
 
 
 const signToken = id=>{ // tạo token với tham số là id, jwt.sign tạo ra 1 token mới
@@ -23,7 +23,7 @@ const createSendToken=(user,statusCode,res)=>{
         httpOnly: true // this will make it so that the cookie cannot be accsessed or modified in any way by the browser
     };
 
-    if(process.env.NODE_ENV === 'production') console.log(11111); // nếu là dạng 'production' thì thêm secure:true vào object cookieOptions
+    if(process.env.NODE_ENV === 'production')  cookieOptions.secure = true// nếu là dạng 'production' thì thêm secure:true vào object cookieOptions
         
     res.cookie('jwt', token, cookieOptions);
     user.password = undefined;
@@ -53,7 +53,9 @@ exports.signup=catchAsync(async(req,res,next)=>{
         passwordConfirm: req.body.passwordConfirm
         // khi tạo mới từ dữ liệu mà user nhập vào thì chỉ có các trường này khi lưu vào database, user ghi các trường khác các trường được quy định ở trên thì không được lưu vào database, các trường có giá trị default ở userModel.js sẽ được lưu tự động nếu mà không được nhập
     });
-
+    
+    const url = `${req.protocol}://${req.get('host')}/me`;
+    await new Email(newUser,url).sendWelcome() // await vì sendWelcome là async và return ra promise 
 
     createSendToken(newUser,201,res)
     //const token=signToken(newUser._id)
@@ -215,14 +217,9 @@ exports.forgotPassword=catchAsync(async (req,res,next)=>{
     await user.save({validateBeforeSave:false}); //user.save({validateBeforeSave:false}); để lưu vào database(xem ghi chú bên userModel), validateBeforeSave loại bỏ các xác thực được chỉ định trong userModel như yêu cầu nhập email,password, confirmPassword
 
     //3 Send it to user email
-    const resetURL=`${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`;
-    const message=`Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password please ignore this email`;
     try{
-        await sendEmail({//sendEmail là async function => return Promise => dùng await
-            email:user.email, //user.email = req.body.email
-            subject:'Your password reset token (valid for 10 min)',
-            message:message
-        });
+        const resetURL=`${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`;
+        await new Email(user,resetURL).passwordReset();
         res.status(200).json({
             status:'success',
             message:'Token sent to email!'

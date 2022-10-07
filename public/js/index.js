@@ -1,16 +1,15 @@
 // import '@babel/polyfill'
 import {login,logout,signup} from './login'
 import {updateSetting} from './updateSetting'
-import {createNewTour} from './create-tour'
+import {bookTour} from './stripe'
 
 //DOM ELEMENTS
 const loginForm = document.querySelector('.form--login');
 const signupForm = document.querySelector('.form--signup');
 const logOutBtn = document.querySelector('.nav__el--logout');
-const createTourForm = document.querySelector('.form--create-tour');
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
-const inputImagesFileURL = document.getElementById('imageCover');
+const bookBtn = document.getElementById('book-tour');
 
 
 if(signupForm){
@@ -48,11 +47,14 @@ if(userDataForm){
         form.append('email',document.getElementById('email').value);
         form.append('photo',document.getElementById('photo').files[0]);
 
-        updateSetting(form,'data');
+        for(var p of form){
+            console.log(p);
+        }
+        //updateSetting(form,'data');
 
         // const name = document.getElementById('name').value;
         // const email = document.getElementById('email').value;
-        //updateSetting({name,email},'data');
+        updateSetting({name,email},'data');
     });
 }
 
@@ -77,43 +79,12 @@ if(userPasswordForm){
 }
 
 
-//display image before upload
-if(inputImagesFileURL){
-    console.log('inputImagesFileURL');
-    inputImagesFileURL.addEventListener('change',async (e)=>{
-        e.preventDefault();
-        const ImagesFileURL = ()=>{
-            var fileSelected = document.getElementById('imageCover').files;
-            if(fileSelected.length > 0){
-                var fileToLoad = fileSelected[0];
-                var fileReader = new FileReader();
-                fileReader.onload = (e) => {
-                    var srcData = e.target.result;
-                    var newImage = document.createElement('img');
-                    newImage.src = srcData;
-                    document.getElementById('displayImg').innerHTML = newImage.outerHTML;
-                }
-                fileReader.readAsDataURL(fileToLoad)
-
-            }
-        };
-        ImagesFileURL();
+if(bookBtn){
+    bookBtn.addEventListener('click',(e)=>{
+        e.target.textContent = 'Processing...'
+        const tourID = e.target.dataset.tourId //e.target: thẻ đang được click
+        bookTour(tourID)
     })
-};
-
-
-if(createTourForm){
-    createTourForm.addEventListener('submit',(e)=>{ // nút btn mới có submit
-        e.preventDefault();
-        const form = new FormData();
-        form.append('name',document.getElementById('name').value);
-        form.append('duration',document.getElementById('duration').value);
-        form.append('maxGroupSize',document.getElementById('maxGroupSize').value);
-        form.append('difficulty',document.getElementById('difficulty').value);
-        form.append('price',document.getElementById('price').value);
-        form.append('summary',document.getElementById('summary').value);
-        form.append('imageCover',document.getElementById('imageCover').files[0]);
-
-        createNewTour(form);
-    });
 }
+
+

@@ -2,7 +2,6 @@ extends base
 include _reviewCard
 
 block append head 
-    //- script(src='/js/mapbox.js')
 
 //- mixin sử dụng để có thể tái sử dụng đoạn code bên dưới nó,  overviewBox(label,text,icon): giống function
 mixin overviewBox(label,text,icon)
@@ -89,7 +88,12 @@ block content
         .cta__content
             h2.heading-secondary What are you waiting for?
             p.cta__text= `${tour.duration} days. 1 adventure. Infinite memories. Make it yours today!`
-            button.btn.btn--green.span-all-rows Book tour now!
+
+            if user
+                button.btn.btn--green.span-all-rows#book-tour(data-tour-id=`${tour.id}`) Book tour now!
+            else 
+                a.button.btn.btn--green.span-all-rows(href='/login') Login to book tour
+
 
             //- extends base: khi render ra giao diện sẽ gọi đến base.pug để lấy phần header và footer để render ra giao diện
             //- const parapraphs = tour.description.split('\n'); chia đoạn văn thành 2 đoạn từ \n, parapraphs là 1 mảng gồm 2 phần tủ là 2 đoạn văn

@@ -280,9 +280,9 @@ exports.getTour=factory.getOne(Tour,{path:'reviews'});
 
 exports.createTour=catchAsync(async(req,res,next)=>{ // hàm catchAsync return ra hàm vô danh sau đó gán vào createTour, khi tạo mới tour thì hàm vô danh đó sẽ được gọi, cần tham số next để gọi đến global error handling middleware
     //tự làm create tour có upload ảnh
-    const imageCoverFilename = `tour-${req.user.id}-${Date.now()}-cover.jpeg` // vì trong route updateTour có id tour nên dùng req.params.id
-    await sharp(req.files.imageCover[0].buffer).resize(2000,1333).toFormat('jpeg').jpeg({quanlity:90}).toFile(`public/img/tours/${imageCoverFilename}`); // toFile(`public/img/tours/${imageCoverFilename}`); lưu file ảnh vào đường dẫn 
-    req.body.imageCover=imageCoverFilename; // req.body.imageCover vì trong Tour Model có field imageCover
+    // const imageCoverFilename = `tour-${req.user.id}-${Date.now()}-cover.jpeg` // vì trong route updateTour có id tour nên dùng req.params.id
+    // await sharp(req.files.imageCover[0].buffer).resize(2000,1333).toFormat('jpeg').jpeg({quanlity:90}).toFile(`public/img/tours/${imageCoverFilename}`); // toFile(`public/img/tours/${imageCoverFilename}`); lưu file ảnh vào đường dẫn 
+    // req.body.imageCover=imageCoverFilename; // req.body.imageCover vì trong Tour Model có field imageCover
     //--------------
 
 
@@ -290,11 +290,7 @@ exports.createTour=catchAsync(async(req,res,next)=>{ // hàm catchAsync return r
     //ko dùng được features.filter().sort().limitFields().paginate(); vì tạo mới ko có dùng được, chỉ khi muốn lấy thông tin sẵn có mới dùng
     //create , update, delete thì không cần truyền đối số thứ 2 cho class APIFeatures
     
-    console.log(3);
-
     const tours=await features.query; // data lưu vào biến tours là 1 object chứa thông tin của tour vừa mới tạo
-
-    console.log(4);
 
     res.status(200).json({
         status:'success',

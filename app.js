@@ -104,6 +104,7 @@ app.use(cors());
 
 //Serving static files
 app.use(express.static(path.join(__dirname,'public'))) // middleware hiển thị html,img.css, khi là file tĩnh thì nó sẽ trỏ vào thư mục public
+//__dirname: trỏ đến thư mục chứa file đang chạy đoạn code có chứa __dirname 
 //console.log(path.join(__dirname,'public')); --> D:\NodeJS-Udemy\complete-node-bootcamp-master\complete-node-bootcamp-master\4-natours\starter\public
 
 // app.use((req,res,next)=>{
@@ -136,6 +137,11 @@ app.use('/api/v1/users',userRouter)
 //Review
 const reviewRouter=require('./routes/reviewRoutes')
 app.use('/api/v1/reviews',reviewRouter)
+
+//Booking
+const bookingRouter=require('./routes/bookingRoutes')
+app.use('/api/v1/bookings',bookingRouter)
+
 
 
 

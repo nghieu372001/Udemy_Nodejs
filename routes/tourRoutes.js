@@ -19,8 +19,8 @@ router.use('/:tourId/reviews',reviewRouter)
 
 router.route('/')
 .get(tourController.getAllTours) // trong get truyền vào 1 callback
-// .post(authController.protect,authController.restrictTo('admin','lead-guide'),tourController.createTour) // source chuẩn
-.post(authController.protect,authController.restrictTo('admin','lead-guide'),tourController.uploadTourImage,tourController.resizeTourImages,tourController.createTour) //tự làm 
+.post(authController.protect,authController.restrictTo('admin','lead-guide'),tourController.createTour) // source chuẩn
+// .post(authController.protect,authController.restrictTo('admin','lead-guide'),tourController.uploadTourImage,tourController.resizeTourImages,tourController.createTour) //tự làm 
 
 router.route('/top-5-cheap').get(tourController.aliasTopTours,tourController.getAllTours) //thực hiện tourController.aliasTopTours rồi mới đến tourController.getAllTours(thứ tự thực hiện tùy vào ví trị), 
 //có next() trong middlewaretourController.aliasTopTours để khi thực hiện xong thì tiếp tục thực hiện middleware tourController.getAllTours

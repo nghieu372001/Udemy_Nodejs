@@ -4814,13 +4814,13 @@ var updateSetting = /*#__PURE__*/function () {
 }();
 
 exports.updateSetting = updateSetting;
-},{"axios":"../../node_modules/axios/index.js","./alert":"alert.js"}],"create-tour.js":[function(require,module,exports) {
+},{"axios":"../../node_modules/axios/index.js","./alert":"alert.js"}],"stripe.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.createNewTour = void 0;
+exports.bookTour = void 0;
 
 var _axios = _interopRequireDefault(require("axios"));
 
@@ -4836,53 +4836,50 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-//type is either 'password' or 'data'
-var createNewTour = /*#__PURE__*/function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(data) {
-    var res;
+var stripe = Stripe('pk_test_51LlYnHH7d2Uxmf1DpXU8RWCaz4QYkqFeuDwwXboQqF5KSECgYZEWwLub9iIS4shBu7wKeAqBcrRWuSCwybsqKqtn00EeLBA0lL');
+
+var bookTour = /*#__PURE__*/function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(tourID) {
+    var session;
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             _context.prev = 0;
             _context.next = 3;
-            return (0, _axios.default)({
-              method: 'POST',
-              url: 'http://127.0.0.1:3000/api/v1/tours',
-              data: data //data send with request(gửi lên url)
-
-            });
+            return (0, _axios.default)("http://127.0.0.1:3000/api/v1/bookings/checkout-session/".concat(tourID));
 
           case 3:
-            res = _context.sent;
+            session = _context.sent;
+            _context.next = 6;
+            return stripe.redirectToCheckout({
+              sessionId: session.data.session.id
+            });
 
-            if (res.data.status === 'success') {
-              (0, _alert.showAlert)('success', 'Create tour successfully');
-            }
-
-            _context.next = 11;
+          case 6:
+            _context.next = 12;
             break;
 
-          case 7:
-            _context.prev = 7;
+          case 8:
+            _context.prev = 8;
             _context.t0 = _context["catch"](0);
-            console.log('Đã lột vào lỗi');
-            (0, _alert.showAlert)('error', _context.t0.response.data.message);
+            console.log(_context.t0);
+            (0, _alert.showAlert)('error', _context.t0);
 
-          case 11:
+          case 12:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 7]]);
+    }, _callee, null, [[0, 8]]);
   }));
 
-  return function createNewTour(_x) {
+  return function bookTour(_x) {
     return _ref.apply(this, arguments);
   };
 }();
 
-exports.createNewTour = createNewTour;
+exports.bookTour = bookTour;
 },{"axios":"../../node_modules/axios/index.js","./alert":"alert.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
@@ -4890,7 +4887,7 @@ var _login = require("./login");
 
 var _updateSetting = require("./updateSetting");
 
-var _createTour = require("./create-tour");
+var _stripe = require("./stripe");
 
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
@@ -4900,14 +4897,19 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 //DOM ELEMENTS
 var loginForm = document.querySelector('.form--login');
 var signupForm = document.querySelector('.form--signup');
 var logOutBtn = document.querySelector('.nav__el--logout');
-var createTourForm = document.querySelector('.form--create-tour');
 var userDataForm = document.querySelector('.form-user-data');
 var userPasswordForm = document.querySelector('.form-user-password');
-var inputImagesFileURL = document.getElementById('imageCover');
+var bookBtn = document.getElementById('book-tour');
 
 if (signupForm) {
   signupForm.addEventListener('submit', function (e) {
@@ -4948,9 +4950,28 @@ if (userDataForm) {
     form.append('name', document.getElementById('name').value);
     form.append('email', document.getElementById('email').value);
     form.append('photo', document.getElementById('photo').files[0]);
-    (0, _updateSetting.updateSetting)(form, 'data'); // const name = document.getElementById('name').value;
-    // const email = document.getElementById('email').value;
-    //updateSetting({name,email},'data');
+
+    var _iterator = _createForOfIteratorHelper(form),
+        _step;
+
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        var p = _step.value;
+        console.log(p);
+      } //updateSetting(form,'data');
+      // const name = document.getElementById('name').value;
+      // const email = document.getElementById('email').value;
+
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
+    }
+
+    (0, _updateSetting.updateSetting)({
+      name: name,
+      email: email
+    }, 'data');
   });
 }
 
@@ -4996,72 +5017,17 @@ if (userPasswordForm) {
       return _ref.apply(this, arguments);
     };
   }());
-} //display image before upload
-
-
-if (inputImagesFileURL) {
-  console.log('inputImagesFileURL');
-  inputImagesFileURL.addEventListener('change', /*#__PURE__*/function () {
-    var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(e) {
-      var ImagesFileURL;
-      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-        while (1) {
-          switch (_context2.prev = _context2.next) {
-            case 0:
-              e.preventDefault();
-
-              ImagesFileURL = function ImagesFileURL() {
-                var fileSelected = document.getElementById('imageCover').files;
-
-                if (fileSelected.length > 0) {
-                  var fileToLoad = fileSelected[0];
-                  var fileReader = new FileReader();
-
-                  fileReader.onload = function (e) {
-                    var srcData = e.target.result;
-                    var newImage = document.createElement('img');
-                    newImage.src = srcData;
-                    document.getElementById('displayImg').innerHTML = newImage.outerHTML;
-                  };
-
-                  fileReader.readAsDataURL(fileToLoad);
-                }
-              };
-
-              ImagesFileURL();
-
-            case 3:
-            case "end":
-              return _context2.stop();
-          }
-        }
-      }, _callee2);
-    }));
-
-    return function (_x2) {
-      return _ref2.apply(this, arguments);
-    };
-  }());
 }
 
-;
+if (bookBtn) {
+  bookBtn.addEventListener('click', function (e) {
+    e.target.textContent = 'Processing...';
+    var tourID = e.target.dataset.tourId; //e.target: thẻ đang được click
 
-if (createTourForm) {
-  createTourForm.addEventListener('submit', function (e) {
-    // nút btn mới có submit
-    e.preventDefault();
-    var form = new FormData();
-    form.append('name', document.getElementById('name').value);
-    form.append('duration', document.getElementById('duration').value);
-    form.append('maxGroupSize', document.getElementById('maxGroupSize').value);
-    form.append('difficulty', document.getElementById('difficulty').value);
-    form.append('price', document.getElementById('price').value);
-    form.append('summary', document.getElementById('summary').value);
-    form.append('imageCover', document.getElementById('imageCover').files[0]);
-    (0, _createTour.createNewTour)(form);
+    (0, _stripe.bookTour)(tourID);
   });
 }
-},{"./login":"login.js","./updateSetting":"updateSetting.js","./create-tour":"create-tour.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./login":"login.js","./updateSetting":"updateSetting.js","./stripe":"stripe.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -5089,7 +5055,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53523" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58039" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

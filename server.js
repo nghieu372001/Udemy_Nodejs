@@ -5,7 +5,7 @@ const dotenv=require('dotenv');
 process.on('uncaughtException',err=>{
     console.log('UNCAUGHT. SHUTTING DOWN...');
     console.log(err.name, err.message);
-    process.exit(1);
+    process.exit(1); // tới đoạn này làm cho node app bị crashed(dừng tức thời), làm cho app tắt đột ngột, hủy bỏ mọi request đang chạy
 })
 
 
@@ -26,7 +26,7 @@ mongoose.connect(DB,{ //mongoose.connect trả ra return
     console.log('DB connection successful!');
 })
 
-app.listen(port,()=>{
+const server = app.listen(port,()=>{
     console.log(`App running on ${port}`);
 });
 
@@ -34,8 +34,8 @@ app.listen(port,()=>{
 process.on('unhandledRejection',err=>{
     console.log('UNHANDLED REJECTION. SHUTTING DOWN...')
     console.log(err.name, err.message);
-    server.close(()=>{  
-        process.exit(1);
+    server.close(()=>{  // đóng server rồi mới tắt app, cho thời gian để hoàn thành mọi request
+        process.exit(1);// tới đoạn này làm cho node app bị crashed(dừng tức thời), làm cho app tắt đột ngột, hủy bỏ mọi request đang chạy
     })
 })
 
