@@ -25,7 +25,7 @@ const createSendToken=(user,statusCode,res)=>{
 
     if(process.env.NODE_ENV === 'production')  cookieOptions.secure = true// nếu là dạng 'production' thì thêm secure:true vào object cookieOptions
         
-    res.cookie('jwt', token, cookieOptions);
+    res.cookie('jwt', token, cookieOptions); // tạo mới cookie
     user.password = undefined;
 
     res.status(statusCode).json({
